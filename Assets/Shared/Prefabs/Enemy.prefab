@@ -76,6 +76,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af7b8bbbd8a74294b330f82af6231796, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  targetGroup: {fileID: 0}
+  fightingCam: {fileID: 0}
 --- !u!1001 &315869790856184315
 PrefabInstance:
   m_ObjectHideFlags: 0

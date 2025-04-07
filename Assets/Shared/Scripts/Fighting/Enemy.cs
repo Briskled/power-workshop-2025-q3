@@ -1,3 +1,6 @@
+using System;
+using Player;
+using Unity.Cinemachine;
 using UnityEngine;
 
 namespace Fighting

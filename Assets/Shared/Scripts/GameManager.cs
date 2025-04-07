@@ -1,4 +1,5 @@
 using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using Fighting;
 using NaughtyAttributes;
 using Player;
@@ -19,19 +20,25 @@ public class GameManager : MonoBehaviour
 {
     [SerializeField] private Character character;
     [SerializeField] private GameState gameState = GameState.Resting;
-    [SerializeField] private Enemy _enemy;
     [Space] [SerializeField] private GameObject tilePrefab;
     [SerializeField] private GameObject enemyPrefab;
     [SerializeField] private CinemachineTargetGroup targetGroup;
-    [SerializeField] private CinemachineCamera fightingCam;
+    [SerializeField] private CinemachineCamera shopCamera;
 
     [SerializeField] private Tile currentTile;
+    private Enemy _enemy;
     private Tile _previousTile;
     private Tile _nextTile;
 
     public void SetGameState(GameState newGameState)
     {
+        var stateBefore = gameState;
         gameState = newGameState;
+        GlobalEvents.onGameStateChanged?.Invoke(new GameStateChangedEvent
+        {
+            stateBefore = stateBefore,
+            stateNow = gameState
+        });
         Debug.Log($"Game State changed to {newGameState}");
     }
 
@@ -48,19 +55,6 @@ public class GameManager : MonoBehaviour
     private async UniTask GoToWalking()
     {
         SetGameState(GameState.Walking);
-        targetGroup.Targets.Clear();
-        targetGroup.Targets.Add(new CinemachineTargetGroup.Target
-        {
-            Object = _enemy.transform,
-            Radius = 1,
-            Weight = 1
-        });
-        targetGroup.Targets.Add(new CinemachineTargetGroup.Target
-        {
-            Object = FindAnyObjectByType<Character>().transform,
-            Radius = 1,
-            Weight = 1
-        });
         await character.WalkTo(currentTile.restingPosition.position.x);
         GoToResting();
     }
@@ -68,6 +62,7 @@ public class GameManager : MonoBehaviour
     private void GoToResting()
     {
         SetGameState(GameState.Resting);
+        FocusEnemy(_enemy);
     }
 
     private async UniTask GoToAttacking()
@@ -94,6 +89,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
+            FocusCharacterOnly();
             character.Health.HealFully();
             FinishTile();
             await GoToWalking();
@@ -122,6 +118,29 @@ public class GameManager : MonoBehaviour
         return Instantiate(tilePrefab, position, Quaternion.identity).GetComponent<Tile>();
     }
 
+    private void FocusEnemy(Enemy enemy)
+    {
+        var newTarget = new CinemachineTargetGroup.Target
+        {
+            Object = enemy.transform,
+            Radius = 1,
+            Weight = 0
+        };
+        var index = targetGroup.Targets.Count;
+        targetGroup.Targets.Add(newTarget);
+
+        DOTween.To(
+            () => targetGroup.Targets[index].Weight,
+            x => targetGroup.Targets[index].Weight = x,
+            1,
+            1);
+    }
+
+    private void FocusCharacterOnly()
+    {
+        targetGroup.Targets.RemoveAll(it => it.Object.TryGetComponent<Enemy>(out _));
+    }
+
     [Button]
     public void Fight()
     {
@@ -129,6 +148,22 @@ public class GameManager : MonoBehaviour
             return;
 
         GoToAttacking();
+    }
+
+    [Button]
+    public void GoToShopping()
+    {
+        if (gameState != GameState.Resting)
+            return;
+
+        SetGameState(GameState.Shopping);
+        shopCamera.gameObject.SetActive(true);
+    }
+
+    public void LeaveShopping()
+    {
+        GoToResting();
+        shopCamera.gameObject.SetActive(false);
     }
 
     private void ResetFight()

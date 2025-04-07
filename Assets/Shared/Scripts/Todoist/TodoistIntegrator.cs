@@ -58,6 +58,8 @@ namespace Todoist
                 });
                 yield return new WaitForSeconds(pollingDelaySec);
             }
+
+            Debug.Log("Done requesting updates");
         }
 
         private IEnumerator RequestUpdates(string token, Action<TodoistSyncResponse> then)
