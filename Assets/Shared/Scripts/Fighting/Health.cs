@@ -91,7 +91,7 @@ namespace Fighting
         private void Start()
         {
             if (startFullLive)
-                CurrentHealth = maxHealth;
+                CurrentHealth = MaxHealth;
         }
 
         public event HealthChangedDelegate onHealthChanged;

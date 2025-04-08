@@ -8,6 +8,17 @@ namespace Fighting
     {
         [SerializeField] private float damage;
 
+        public float Damage
+        {
+            get => damage;
+            set
+            {
+                var oldValue = damage;
+                var newValue = Mathf.Max(value, 0);
+                damage = newValue;
+            }
+        }
+
         public async UniTask Attack(Health target)
         {
             // todo animation

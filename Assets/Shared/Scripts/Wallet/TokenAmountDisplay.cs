@@ -1,12 +1,14 @@
 using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace Shared.Scripts.Wallet
 {
-    public class TokenAmountDisplay : MonoBehaviour
+    public class TokenAmountDisplay : MonoBehaviour, IPointerClickHandler
     {
         [SerializeField] private TextMeshProUGUI text;
+        [SerializeField] private bool debugMode;
 
         private void Start()
         {
@@ -31,6 +33,12 @@ namespace Shared.Scripts.Wallet
         private void OnTokenCountChanged(WalletTokenCountChangedEvent obj)
         {
             UpdateText(obj.amountNow);
+        }
+
+        public void OnPointerClick(PointerEventData eventData)
+        {
+            if (debugMode)
+                TokenWallet.Instance.Amount++;
         }
     }
 }

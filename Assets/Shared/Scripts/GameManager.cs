@@ -29,6 +29,7 @@ public class GameManager : MonoBehaviour
     private Enemy _enemy;
     private Tile _previousTile;
     private Tile _nextTile;
+    private int _enemyLevel = 1;
 
     public void SetGameState(GameState newGameState)
     {
@@ -91,6 +92,7 @@ public class GameManager : MonoBehaviour
         {
             FocusCharacterOnly();
             character.Health.HealFully();
+            _enemyLevel++;
             FinishTile();
             await GoToWalking();
         }
@@ -110,6 +112,7 @@ public class GameManager : MonoBehaviour
     {
         var enemy = Instantiate(enemyPrefab).GetComponent<Enemy>();
         enemy.transform.position = position;
+        enemy.Level = _enemyLevel;
         return enemy;
     }
 
