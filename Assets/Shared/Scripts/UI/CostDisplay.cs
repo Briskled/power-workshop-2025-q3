@@ -28,6 +28,21 @@ public class CostDisplay : MonoBehaviour
         _text = GetComponent<TextMeshProUGUI>();
     }
 
+    private void OnEnable()
+    {
+        GlobalEvents.onWalletTokenCountChanged += OnWalletCountChanged;
+    }
+
+    private void OnDisable()
+    {
+        GlobalEvents.onWalletTokenCountChanged -= OnWalletCountChanged;
+    }
+
+    private void OnWalletCountChanged(WalletTokenCountChangedEvent obj)
+    {
+        UpdateText();
+    }
+
     private void Start()
     {
         UpdateText();

@@ -1,4 +1,5 @@
 using System;
+using JetBrains.Annotations;
 using UnityEngine;
 
 public class TokenWallet : MonoBehaviour
@@ -57,5 +58,18 @@ public class TokenWallet : MonoBehaviour
     private void OnTodoCompleted(TodoCompletedEvent obj)
     {
         Amount++;
+    }
+
+    public bool TryTransaction(int cost, Action onSuccess = null, Action onFail = null)
+    {
+        if (cost > _amount)
+        {
+            onFail?.Invoke();
+            return false;
+        }
+
+        Amount -= cost;
+        onSuccess?.Invoke();
+        return true;
     }
 }

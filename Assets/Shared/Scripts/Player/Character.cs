@@ -83,6 +83,12 @@ namespace Player
             Fighter = GetComponent<Fighter>();
         }
 
+        private void Start()
+        {
+            Health.MaxHealth = MaxHealth;
+            Fighter.Damage = Damage;
+        }
+
         public async UniTask SlideTo(float targetPositionX, float duration)
         {
             var ct = this.GetCancellationTokenOnDestroy();

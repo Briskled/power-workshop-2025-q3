@@ -53,12 +53,19 @@ namespace Fighting
         {
             health.onHealthChanged += OnHealthChanged;
             health.onMaxHealthChanged += OnMaxHealthChanged;
+            health.onDeath += OnDeath;
         }
 
         private void OnDisable()
         {
             health.onHealthChanged -= OnHealthChanged;
             health.onMaxHealthChanged -= OnMaxHealthChanged;
+            health.onDeath -= OnDeath;
+        }
+
+        private void OnDeath()
+        {
+            Destroy(gameObject);
         }
 
         private void Start()

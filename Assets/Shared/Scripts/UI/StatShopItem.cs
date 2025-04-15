@@ -16,6 +16,8 @@ namespace Shared.Scripts.UI
         [SerializeField] private Character character;
         [SerializeField] private TextMeshProUGUI currentValueText;
         [SerializeField] private TextMeshProUGUI changeText;
+        [SerializeField] private int cost;
+        [SerializeField] private CostDisplay costDisplay;
 
         private Button _button;
 
@@ -27,8 +29,11 @@ namespace Shared.Scripts.UI
 
         private void OnClick()
         {
-            // todo check if can afford
+            if (!TokenWallet.Instance.TryTransaction(cost)) return;
+
+            cost++;
             character.LevelUp(statType);
+            UpdateText();
             // todo animation
         }
 
@@ -66,6 +71,7 @@ namespace Shared.Scripts.UI
             var diff = nextValue - currentValue;
             currentValueText.text = currentValue.ToString();
             changeText.text = "+" + diff;
+            costDisplay.Cost = cost;
         }
     }
 }

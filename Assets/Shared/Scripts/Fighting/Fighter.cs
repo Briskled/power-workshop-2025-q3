@@ -4,11 +4,13 @@ using UnityEngine;
 
 namespace Fighting
 {
+    public delegate void DamageChangedDelegate(int damageBefore, int damageNow);
+
     public class Fighter : MonoBehaviour
     {
-        [SerializeField] private float damage;
+        [SerializeField] private int damage;
 
-        public float Damage
+        public int Damage
         {
             get => damage;
             set
@@ -16,8 +18,11 @@ namespace Fighting
                 var oldValue = damage;
                 var newValue = Mathf.Max(value, 0);
                 damage = newValue;
+                onDamageChanged?.Invoke(oldValue, newValue);
             }
         }
+
+        public event DamageChangedDelegate onDamageChanged;
 
         public async UniTask Attack(Health target)
         {
